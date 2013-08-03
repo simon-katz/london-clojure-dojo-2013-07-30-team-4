@@ -8,22 +8,28 @@
                      \D 500
                      \M 1000})
 
-(defn collapse [s]
-  (loop [current s]
-    (let [next (clojure.string/replace current "IIIII" "V")]
+(defn call-until-no-change [f v]
+  (loop [current v]
+    (let [next (f current)]
       (if (= next current)
         current
         (recur next)))))
 
-                   ;; "IIIII" "V"
-                   ;; "VV" "X"
-                   ;; "XXXXX" "L"
-                   ;; "LL" "C"
-                   ;; "CCCCC" "D"
-                   ;; "DD" "M"
+(def equivalents [["IIIII" "V"]
+                  ["VV" "X"]
+                  ["XXXXX" "L"]
+                  ["LL" "C"]
+                  ["CCCCC" "D"]
+                  ["DD" "M"]])
 
-(def numerals [\I \V \X \L \C \D \M])
-
+(defn collapse [s]
+  (reduce (fn [v [uncollapsed collapsed]]
+            (call-until-no-change #(clojure.string/replace %
+                                                           uncollapsed
+                                                           collapsed)
+                                  v))
+          s
+          equivalents))
 
 (defn add [x y]
   (collapse

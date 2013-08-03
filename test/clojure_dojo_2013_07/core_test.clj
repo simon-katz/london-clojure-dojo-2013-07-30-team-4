@@ -11,3 +11,6 @@
 (deftest II+III=V
   (is (= "V" (add "II" "III"))))
 
+(deftest III+III+III+III=XII
+  (is (= "XII" (add "III" (add "III" (add "III" "III"))))))
+
